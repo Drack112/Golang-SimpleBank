@@ -26,7 +26,7 @@ jobs:
       - checkout
       - run:
           name: Build Docker Image 🌊
-          command: docker build -t .
+          command: docker build . -t test
 
   checkout:
     <<: *defaults
