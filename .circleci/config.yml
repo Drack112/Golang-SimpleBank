@@ -20,14 +20,6 @@ jobs:
           name: Build Golang App 🐇
           command: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-  build-docker:
-    <<: *defaults
-    steps:
-      - checkout
-      - run:
-          name: Build Docker Image 🌊
-          command: docker build . -t test
-
   checkout:
     <<: *defaults
     steps:
@@ -70,9 +62,6 @@ workflows:
     jobs:
       - checkout
       - build-golang:
-          requires:
-            - checkout
-      - build-docker:
           requires:
             - checkout
       - unit-test:
