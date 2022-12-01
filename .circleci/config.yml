@@ -8,7 +8,7 @@ defaults: &defaults
         POSTGRES_USER: db_test_user
         POSTGRES_PASSWORD: db_test_password
         POSTGRES_DB: db_test_database
-  working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+  working_directory: /go/src/github.com/Drack112/simplebank
 
 version: 2
 jobs:
@@ -17,7 +17,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+          at: /go/src/github.com/Drack112/simplebank
       - restore_cache:
           keys:
             - go-mod-v4-{{ checksum "go.sum" }}
@@ -36,7 +36,7 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+          at: /go/src/github.com/Drack112/simplebank
       - run:
           name: Waiting for Postgres to be ready
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
