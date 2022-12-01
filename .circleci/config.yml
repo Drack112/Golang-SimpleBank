@@ -6,6 +6,10 @@ machine:
     PATH: "${GOPATH}/bin:${PATH}"
     BUILD_PATH: "${GOPATH}/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
 
+override:
+  - mkdir -p ~/simplebank/src/github.com/${CIRCLE_PROJECT_USERNAME}
+  - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} ${BUILD_PATH}
+
 defaults: &defaults
   docker:
     - image: circleci/golang
