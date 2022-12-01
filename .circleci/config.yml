@@ -37,6 +37,8 @@ jobs:
     steps:
       - attach_workspace:
           at: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+      - run: sudo apt-get update && sudo apt-get install postgresql
+      - run: psql < scripts/init/reset.sql
       - run:
           name: Unit Tests
           command: |
