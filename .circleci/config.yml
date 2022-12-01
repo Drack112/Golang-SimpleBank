@@ -1,3 +1,11 @@
+machine:
+  environment:
+    # GOROOT is not set by default
+    GOROOT: ""
+    GOPATH: "${HOME}/simplebank"
+    PATH: "${GOPATH}/bin:${PATH}"
+    BUILD_PATH: "${GOPATH}/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+
 defaults: &defaults
   docker:
     - image: circleci/golang
@@ -8,7 +16,7 @@ defaults: &defaults
         POSTGRES_USER: db_test_user
         POSTGRES_PASSWORD: db_test_password
         POSTGRES_DB: db_test_database
-  working_directory: /go/src/github.com/Drack112/simplebank
+  working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
 
 version: 2
 jobs:
@@ -17,7 +25,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: /go/src/github.com/Drack112/simplebank
+          at: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
       - restore_cache:
           keys:
             - go-mod-v4-{{ checksum "go.sum" }}
@@ -36,7 +44,7 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: /go/src/github.com/Drack112/simplebank
+          at: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
       - run:
           name: Waiting for Postgres to be ready
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
