@@ -12,6 +12,22 @@ defaults: &defaults
 
 version: 2
 jobs:
+  build-golang:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: Build Golang App 🐇
+          command: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+
+  build-docker:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: Build Docker Image 🌊
+          command: docker build -t .
+
   checkout:
     <<: *defaults
     steps:
@@ -22,7 +38,7 @@ jobs:
           keys:
             - go-mod-v4-{{ checksum "go.sum" }}
       - run:
-          name: Dependencies
+          name: Get Dependencies 📪
           command: go get -v -t -d ./...
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
@@ -37,8 +53,12 @@ jobs:
     steps:
       - attach_workspace:
           at: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
-      - run: sudo apt-get update && sudo apt-get install postgresql
-      - run: psql -d "host=localhost port=5432 dbname=db_test_database user=db_test_user password=db_test_password" < scripts/init/reset.sql
+      - run:
+          name: Install PostgreSQL CLI on ubuntu 🏓
+          command: sudo apt-get update && sudo apt-get install postgresql
+      - run:
+          name: Execute migrations 🍮
+          command: psql -d "host=localhost port=5432 dbname=db_test_database user=db_test_user password=db_test_password" < scripts/init/reset.sql
       - run:
           name: Unit Tests
           command: |
@@ -49,6 +69,12 @@ workflows:
   test-deploy-purge:
     jobs:
       - checkout
+      - build-golang:
+          requires:
+            - checkout
+      - build-docker:
+          requires:
+            - checkout
       - unit-test:
           requires:
             - checkout
