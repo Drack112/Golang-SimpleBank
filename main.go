@@ -1,13 +1,13 @@
 package main
 
 import (
-    "database/sql"
-    "log"
+	"database/sql"
+	"log"
 
-    "github.com/Drack112/simplebank/api"
-    db "github.com/Drack112/simplebank/db/sqlc"
-    "github.com/Drack112/simplebank/util"
-    _ "github.com/lib/pq"
+	"github.com/Drack112/simplebank/api"
+	db "github.com/Drack112/simplebank/db/sqlc"
+	"github.com/Drack112/simplebank/util"
+	_ "github.com/lib/pq"
 )
 
 func main() {

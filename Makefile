@@ -1,6 +1,6 @@
 include app.env
 
-.PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test postgres server
+.PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test server postgres-db postgres-db-test
 
 PWD = $(shell pwd)
 PORT = ${DB_PORT}
@@ -10,9 +10,6 @@ NAME = ${DB_NAME}
 HOST = ${DB_HOST_TEST}
 
 N = 1
-
-postgres:
-	docker-compose up db -d
 
 migrate-create:
 	@echo "---Creating migration files---"
@@ -34,4 +31,10 @@ test:
 	go test -v -cover ./...
 
 server:
-	go run main.go
+	set -a && source ./app.env && docker-compose up --build -V
+
+postgres-db:
+	set -a && source ./app.env && docker-compose up db --build -V
+
+postgres-db-test:
+	set -a && source ./app.env && docker-compose up db_test --build -V

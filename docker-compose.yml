@@ -17,28 +17,46 @@ services:
       - .:/go/src/app
     depends_on:
       - db
+      - db_test
       - reverse-proxy
     networks:
       - gin-app
-    env_file:
-      - .env
 
   db:
-    build: .docker/postgres
+    build:
+      context: .docker/postgres
+      target: development
     container_name: postgres-accounts-simplebank
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
       - DATABASE_HOST=${DB_HOST}
+    expose:
+      - 5433
     ports:
-      - "5432:5432"
+      - 5433:5433
     volumes:
       - .docker/dbdata:/var/lib/postgresql/data
     networks:
       - gin-app
-    env_file:
-      - .env
+
+  db_test:
+    build:
+      context: .docker/postgres
+      target: test
+    container_name: postgres-test-accounts-simplebank
+    environment:
+      - POSTGRES_USER=${DB_USER_TEST}
+      - POSTGRES_PASSWORD=${DB_PASSWORD_TEST}
+      - POSTGRES_DB=${DB_NAME_TEST}
+      - DATABASE_HOST=${DB_HOST_TEST}
+    ports:
+      - 5432:5432
+    volumes:
+      - .docker/dbDataTest:/var/lib/postgresql/data
+    networks:
+      - gin-app
 
   reverse-proxy:
     image: traefik:v2.0
@@ -70,8 +88,6 @@ services:
     networks:
       - gin-app
     restart: unless-stopped
-    env_file:
-      - .env
 
 networks:
   gin-app:
