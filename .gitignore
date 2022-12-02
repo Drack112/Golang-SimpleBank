@@ -1,4 +1,7 @@
 /.docker/dbdata
-/.env
 /tmp
 /.vscode
+
+/app.env
+/.env.example
+/LICENSE.md
