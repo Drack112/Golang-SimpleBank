@@ -1,11 +1,13 @@
+include app.env
+
 .PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test postgres server
 
 PWD = $(shell pwd)
-PORT = 5432
-USER = drack
-PASSWORD = 123
-NAME = simplebank
-HOST = localhost
+PORT = ${DB_PORT}
+USER = ${DB_USER}
+PASSWORD = ${DB_PASSWORD}
+NAME = ${DB_NAME}
+HOST = ${DB_HOST_TEST}
 
 N = 1
 
@@ -29,7 +31,7 @@ sqlc:
 	sqlc generate
 
 test:
-	go test -v -cover ./db/sqlc
+	go test -v -cover ./...
 
 server:
 	go run main.go
