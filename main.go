@@ -1,56 +1,34 @@
 package main
 
 import (
-    "context"
+    "database/sql"
     "log"
-    "net/http"
-    "os"
-    "os/signal"
-    "syscall"
-    "time"
 
-    "github.com/gin-gonic/gin"
+    "github.com/Drack112/simplebank/api"
+    db "github.com/Drack112/simplebank/db/sqlc"
+    _ "github.com/lib/pq"
+)
+
+const (
+    dbDriver     = "postgres"
+    dbSource     = "postgresql://drack:123@db:5432/simplebank?sslmode=disable"
+    serverAdress = "0.0.0.0:8080"
 )
 
 func main() {
     log.Printf("Starting server...")
 
-    router := gin.Default()
-
-    router.GET("/api/bank", func(ctx *gin.Context) {
-        ctx.JSON(http.StatusOK, gin.H{"message": "Hello Gionic"})
-    })
-
-    srv := &http.Server{
-        Addr:    ":8080",
-        Handler: router,
+    conn, err := sql.Open(dbDriver, dbSource)
+    if err != nil {
+        log.Fatal("cannot connect do pg db: ", err)
     }
 
-    // Graceful server shutdown - https://github.com/gin-gonic/examples/blob/master/graceful-shutdown/graceful-shutdown/server.go
-    go func() {
-        if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-            log.Fatalf("Failed to initialize server: %v\n", err)
-        }
-    }()
+    store := db.NewStore(conn)
+    server := api.NewServer(store)
 
-    log.Printf("Listening on port %v\n", srv.Addr)
-
-    // Wait for kill signal of channel
-    quit := make(chan os.Signal)
-
-    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-
-    // This blocks until a signal is passed into the quit channel
-    <-quit
-
-    // The context is used to inform the server it has 5 seconds to finish
-    // the request it is currently handling
-    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-    defer cancel()
-
-    // Shutdown server
-    log.Println("Shutting down server...")
-    if err := srv.Shutdown(ctx); err != nil {
-        log.Fatalf("Server forced to shutdown: %v\n", err)
+    err = server.Start(serverAdress)
+    if err != nil {
+        log.Fatal("cannot connect to server: ", err)
     }
+
 }
