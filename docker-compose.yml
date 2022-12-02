@@ -51,6 +51,8 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD_TEST}
       - POSTGRES_DB=${DB_NAME_TEST}
       - DATABASE_HOST=${DB_HOST_TEST}
+    expose:
+      - 5432
     ports:
       - 5432:5432
     volumes:
