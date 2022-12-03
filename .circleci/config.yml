@@ -11,6 +11,8 @@ defaults: &defaults
   working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
 
 version: 2
+orbs:
+  codecov: codecov/codecov@1.0.2
 jobs:
   build-golang:
     <<: *defaults
@@ -61,6 +63,8 @@ jobs:
             ./test.sh -s
       - store_artifacts:
           path: /tmp/artifacts
+      - codecov/upload:
+          file: /tmp/artifacts/coverage.html
 
 workflows:
   version: 2
