@@ -6,11 +6,11 @@ import (
 )
 
 type Server struct {
-    db     *db.Store
+    db     db.Store
     router *gin.Engine
 }
 
-func NewServer(db *db.Store) *Server {
+func NewServer(db db.Store) *Server {
     server := &Server{
         db: db,
     }
