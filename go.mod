@@ -3,13 +3,13 @@ module github.com/Drack112/simplebank
 go 1.18
 
 require (
+	github.com/golang/mock v1.6.0
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
 )
 
 require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/golang/mock v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
@@ -19,8 +19,6 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
-	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
-	golang.org/x/tools v0.1.12 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
 
