@@ -15,6 +15,7 @@ jobs:
   build-golang:
     <<: *defaults
     steps:
+      - checkout
       - run:
           name: Build Golang App 🐇
           command: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
@@ -57,7 +58,7 @@ jobs:
       - run:
           name: Unit Tests 🌏 & Publish Coverage to Coveralls.io 🖥️
           command: |
-            ./test.sh -s && goveralls -coverprofile=coverage.txt -service semaphore -repotoken $COVERALLS_TOKEN
+            ./test.sh -s
 
 workflows:
   version: 2
