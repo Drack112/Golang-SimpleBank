@@ -55,13 +55,9 @@ jobs:
           command: |
             go get golang.org/x/tools/cmd/cover && go get github.com/mattn/goveralls
       - run:
-          name: Unit Tests 🌏
+          name: Unit Tests 🌏 & Publish Coverage to Coveralls.io 🖥️
           command: |
-            ./test.sh -s
-      - run:
-          name: "Publish Coverage to Coveralls.io 🖥️"
-          command: |
-            goveralls -coverprofile=coverage.txt -service semaphore -repotoken $COVERALLS_TOKEN
+            ./test.sh -s && goveralls -coverprofile=coverage.txt -service semaphore -repotoken $COVERALLS_TOKEN
 
 workflows:
   version: 2
