@@ -52,9 +52,15 @@ jobs:
           name: Execute migrations 🍮
           command: psql -d "host=localhost port=5432 dbname=db_test_database user=db_test_user password=db_test_password" < scripts/init/reset.sql
       - run:
-          name: Unit Tests
+          name: Create a temp directory for artifacts 📂
+          command: |
+            mkdir -p /tmp/artifacts
+      - run:
+          name: Unit Tests 🌏
           command: |
             ./test.sh -s
+      - store_artifacts:
+          path: /tmp/artifacts
 
 workflows:
   version: 2
@@ -67,3 +73,4 @@ workflows:
       - unit-test:
           requires:
             - checkout
+# VS Code Extension Version: 1.3.0
