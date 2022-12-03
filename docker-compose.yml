@@ -12,7 +12,7 @@ services:
     restart: on-failure
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.account.rule=Host(`localhost`) && PathPrefix(`/api/accounts`)"
+      - "traefik.http.routers.account.rule=Host(`localhost`) && PathPrefix(`/api`)"
     volumes:
       - .:/go/src/app
     depends_on:
