@@ -63,7 +63,7 @@ jobs:
             ./test.sh -s
       - store_artifacts:
           path: /tmp/artifacts
-      - codecov/upload:
+      - codecov_upload:
           file: /tmp/artifacts/coverage.html
 
 workflows:
