@@ -28,7 +28,7 @@ sqlc:
 	sqlc generate
 
 test:
-	go test -v -cover ./...
+	 go test -coverpkg ./... ./... -coverprofile=coverage.txt
 
 server:
 	set -a && source ./app.env && docker-compose up --build -V

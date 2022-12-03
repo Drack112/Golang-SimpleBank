@@ -2,9 +2,8 @@ case "$1" in
     -s | --short)
         case "$2" in
             -c | --coverage) echo "Run only unit tests (with coverage)"
-                go test -v -coverprofile c.out -short ./...
-                go tool cover -html=c.out -o coverage.html
-                mv coverage.html /tmp/artifacts
+                go test -coverpkg ./... ./... -coverprofile=coverage.txt
+                mv coverage.txt /tmp/artifacts
             ;;
             *) echo "Run only unit tests"
                 go test -v -short ./...
@@ -15,8 +14,7 @@ case "$1" in
         go test -v -run Integration ./...
     ;;
     *) echo "Run all tests (with coverage)"
-        go test -v -coverprofile c.out -short ./...
-        go tool cover -html=c.out -o coverage.html
-        mv coverage.html /tmp/artifacts
+        go test -coverpkg ./... ./... -coverprofile=coverage.txt
+        mv coverage.txt /tmp/artifacts
     ;;
 esac

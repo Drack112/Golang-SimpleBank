@@ -11,13 +11,10 @@ defaults: &defaults
   working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
 
 version: 2
-orbs:
-  codecov: codecov/codecov@1.0.2
 jobs:
   build-golang:
     <<: *defaults
     steps:
-      - checkout
       - run:
           name: Build Golang App 🐇
           command: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
@@ -54,6 +51,11 @@ jobs:
           name: Execute migrations 🍮
           command: psql -d "host=localhost port=5432 dbname=db_test_database user=db_test_user password=db_test_password" < scripts/init/reset.sql
       - run:
+          name: "Install Coveralls and Cover 🚂"
+          command: |
+            go get golang.org/x/tools/cmd/cover &&
+            go get github.com/mattn/goveralls
+      - run:
           name: Create a temp directory for artifacts 📂
           command: |
             mkdir -p /tmp/artifacts
@@ -63,8 +65,6 @@ jobs:
             ./test.sh -s
       - store_artifacts:
           path: /tmp/artifacts
-      - codecov_upload:
-          file: /tmp/artifacts/coverage.html
 
 workflows:
   version: 2
