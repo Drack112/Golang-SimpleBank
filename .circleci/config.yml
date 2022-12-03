@@ -54,11 +54,11 @@ jobs:
       - run:
           name: "Install Coveralls and Cover 🚂"
           command: |
-            go get golang.org/x/tools/cmd/cover && go get github.com/mattn/goveralls
+            go get golang.org/x/tools/cmd/cover && go install github.com/mattn/goveralls@latest
       - run:
           name: Unit Tests 🌏 & Publish Coverage to Coveralls.io 🖥️
           command: |
-            ./test.sh -s
+            go test -coverpkg ./... ./... -coverprofile=coverage.txt && goveralls -coverprofile=coverage.txt -service semaphore -repotoken $COVERALLS_TOKEN
 
 workflows:
   version: 2
