@@ -68,5 +68,4 @@ func (server *Server) createUser(ctx *gin.Context) {
 
     ctx.JSON(http.StatusOK, rsp)
     return
-
 }
