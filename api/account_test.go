@@ -44,7 +44,7 @@ func TestGetAccount(t *testing.T) {
                     Return(db.Account{}, sql.ErrNoRows).
                     Times(1)
             },
-            expectStatus: http.StatusBadRequest,
+            expectStatus: http.StatusNotFound,
         },
         {
             name:      "InternalError",
