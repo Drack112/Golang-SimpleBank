@@ -1,7 +1,7 @@
 package token
 
 import (
-    "errors"
+    "fmt"
     "time"
 
     "github.com/google/uuid"
@@ -9,8 +9,8 @@ import (
 
 // Different types of error returned by the VerifyToken function
 var (
-    ErrInvalidToken = errors.New("token is invalid")
-    ErrExpiredToken = errors.New("token has expired")
+    ErrInvalidToken = fmt.Errorf("token is invalid")
+    ErrExpiredToken = fmt.Errorf("token has expired")
 )
 
 // Payload contains the payload data of the token
