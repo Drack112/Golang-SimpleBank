@@ -1,5 +1,8 @@
 .PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test server postgres-db postgres-db-test generate-mock
 
+include app.env
+export
+
 PWD = $(shell pwd)
 PORT = ${DB_PORT}
 USER = ${DB_USER}
@@ -29,13 +32,13 @@ test:
 	 go test -coverpkg ./... ./... -coverprofile=coverage.txt
 
 server:
-	set -a && source ./app.env && docker-compose up --build -V
+	docker-compose up --build -V
 
 postgres-db:
-	set -a && source ./app.env && docker-compose up db --build -V
+	docker-compose up db --build -V
 
 postgres-db-test:
-	set -a && source ./app.env && docker-compose up db_test --build -V
+	docker-compose up db_test --build -V
 
 generate-mock:
 	mockgen --destination db/mockgen/store.go --package mock_db github.com/Drack112/simplebank/db/sqlc Store
