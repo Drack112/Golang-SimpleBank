@@ -20,8 +20,9 @@ func addAuthorization(
     username string,
     duration time.Duration,
 ) {
-    token, err := tokenMaker.CreateToken(username, duration)
+    token, payload, err := tokenMaker.CreateToken(username, duration)
     require.NoError(t, err)
+    require.NotEmpty(t, payload)
 
     authorizationHeader := fmt.Sprintf("%s %s", authorizationType, token)
     request.Header.Set(authorizationHeaderKey, authorizationHeader)
@@ -84,7 +85,7 @@ func TestAuthMiddleware(t *testing.T) {
 
         t.Run(tc.name, func(t *testing.T) {
             server := newTestServer(t, nil)
-            authPath := "/api/auth"
+            authPath := "/auth"
             server.router.GET(
                 authPath,
                 authMiddleware(server.tokenMaker),
