@@ -47,4 +47,4 @@ jobs:
         run: migrate -source file://$(pwd)/db/migrations -database postgres://db_test_user:db_test_password@localhost:5432/db_test_database?sslmode=disable up
 
       - name: Test 🚂
-        run: make test
+        run: go test --coverpkg ./... ./... 
