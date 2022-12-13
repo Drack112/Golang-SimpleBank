@@ -38,7 +38,7 @@ jobs:
             - "/go/pkg/mod"
       - persist_to_workspace:
           root: .
-          paths: .
+          paths: ["."]
 
   unit-test:
     <<: *defaults

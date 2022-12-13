@@ -17,7 +17,7 @@ migrate-create:
 	migrate create -ext sql -dir $(PWD)/db/migrations -seq -digits 5 $(NAME)
 
 migrate-up:
-	migrate -source file://$(PWD)/db/migrations -database postgres://${USER}:${PASSWORD}@${HOST}:$(PORT)/$(NAME)?sslmode=disable up $(N)
+	migrate -source file://$(PWD)/db/migrations -database postgres://${USER}:${PASSWORD}@${HOST}:$(PORT)/$(NAME)?sslmode=disable up
 
 migrate-down:
 	migrate -source file://$(PWD)/db/migrations -database postgres://${USER}:${PASSWORD}@${HOST}:$(PORT)/$(NAME)?sslmode=disable down $(N)
