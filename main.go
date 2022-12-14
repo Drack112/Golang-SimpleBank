@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"net"
 	"net/http"
+	"os"
 
 	"github.com/Drack112/simplebank/api"
 	db "github.com/Drack112/simplebank/db/sqlc"
@@ -18,7 +19,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	_ "github.com/lib/pq"
 	"github.com/rakyll/statik/fs"
-	_ "github.com/rs/zerolog"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -30,6 +31,10 @@ func main() {
 	config, err := util.LoadConfig("./")
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot load config")
+	}
+
+	if config.Env == "development" {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 
 	conn, err := sql.Open(config.DBDriver, config.DBSource)
@@ -122,7 +127,8 @@ func runGatewayServer(config util.Config, store db.Store) {
 	}
 
 	log.Info().Msgf("start HTTP gateway server at %s", listener.Addr().String())
-	err = http.Serve(listener, mux)
+	handler := gapi.HttpLogger(mux)
+	err = http.Serve(listener, handler)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot start HTTP gateway server")
 	}
