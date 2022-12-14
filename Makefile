@@ -53,3 +53,9 @@ proto:
 
 evans:
 	evans --host 172.19.0.5 --port 5454 -r repl
+
+db_docs:
+	dbdocs build doc/db.dbml
+
+db_schema:
+	dbml2sql --postgres -o doc/schema.sql doc/db.dbml

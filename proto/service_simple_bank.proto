@@ -11,13 +11,13 @@ import "rpc_create_user.proto";
 service SimpleBank {
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
     option (google.api.http) = {
-      post : "/v1/create_user",
+      post : "/api/v1/create_user",
       body : "*"
     };
   }
   rpc LoginUser(LoginUserRequest) returns (LoginUserResponse) {
     option (google.api.http) = {
-      post : "/v1/login_user",
+      post : "/api/v1/login_user",
       body : "*"
     };
   }

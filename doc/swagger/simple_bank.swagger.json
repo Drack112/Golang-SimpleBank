@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/create_user": {
+    "/api/v1/create_user": {
       "post": {
         "operationId": "SimpleBank_CreateUser",
         "responses": {
@@ -48,7 +48,7 @@
         ]
       }
     },
-    "/v1/login_user": {
+    "/api/v1/login_user": {
       "post": {
         "operationId": "SimpleBank_LoginUser",
         "responses": {
