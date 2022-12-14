@@ -51,9 +51,10 @@ func main() {
 		Addr: config.RedisHost,
 	}
 
+	taskDistributor := worker.NewRedisTaskDistributor(redisOpt)
 	go runTaskProcessor(redisOpt, store)
-	go runGatewayServer(config, store)
-	runGrpcServer(config, store)
+	go runGatewayServer(config, store, taskDistributor)
+	runGrpcServer(config, store, taskDistributor)
 }
 
 func runDBMigration(migrationURL string, dbSource string) {
@@ -78,8 +79,8 @@ func runTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store) {
 	}
 }
 
-func runGrpcServer(config util.Config, store db.Store) {
-	server, err := gapi.NewServer(config, store)
+func runGrpcServer(config util.Config, store db.Store, taskDistributor worker.TaskDistributor) {
+	server, err := gapi.NewServer(config, store, taskDistributor)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create server")
 	}
@@ -103,8 +104,8 @@ func runGrpcServer(config util.Config, store db.Store) {
 
 }
 
-func runGatewayServer(config util.Config, store db.Store) {
-	server, err := gapi.NewServer(config, store)
+func runGatewayServer(config util.Config, store db.Store, taskDistributor worker.TaskDistributor) {
+	server, err := gapi.NewServer(config, store, taskDistributor)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create server")
 	}
@@ -118,25 +119,26 @@ func runGatewayServer(config util.Config, store db.Store) {
 		},
 	})
 
-	gRPCMux := runtime.NewServeMux(jsonOption)
+	grpcMux := runtime.NewServeMux(jsonOption)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	err = pb.RegisterSimpleBankHandlerServer(ctx, gRPCMux, server)
+	err = pb.RegisterSimpleBankHandlerServer(ctx, grpcMux, server)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot register handler server")
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/api/", gRPCMux)
+	mux.Handle("/", grpcMux)
 
 	statikFS, err := fs.New()
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create statik fs")
 	}
 
-	swaggerHandler := http.StripPrefix("/api/swagger/", http.FileServer(statikFS))
-	mux.Handle("/api/swagger/", swaggerHandler)
+	swaggerHandler := http.StripPrefix("/swagger/", http.FileServer(statikFS))
+	mux.Handle("/swagger/", swaggerHandler)
 
 	listener, err := net.Listen("tcp", config.HttpServerAddress)
 	if err != nil {
