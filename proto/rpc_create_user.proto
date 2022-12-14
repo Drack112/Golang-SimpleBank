@@ -3,7 +3,7 @@ syntax = "proto3";
 package pb;
 
 import "user.proto";
-option go_package = "github.com/techschool/simplebank/pb";
+option go_package = "github.com/Drack112/simplebank/pb";
 
 message CreateUserRequest {
   string username = 1;

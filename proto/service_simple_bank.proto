@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package pb;
 
-option go_package = "github.com/techschool/simplebank/pb";
+option go_package = "github.com/Drack112/simplebank/pb";
 
 import "rpc_login_user.proto";
 import "rpc_create_user.proto";

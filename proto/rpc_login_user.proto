@@ -5,7 +5,7 @@ package pb;
 import "user.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/techschool/simplebank/pb";
+option go_package = "github.com/Drack112/simplebank/pb";
 
 message LoginUserRequest {
   string username = 1;
