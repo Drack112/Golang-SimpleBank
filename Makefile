@@ -1,4 +1,4 @@
-.PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test server postgres-db postgres-db-test generate-mock proto
+.PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test server postgres-db postgres-db-test generate-mock proto db_docs db_schema evans redis
 
 include app.env
 export
@@ -62,3 +62,6 @@ db_docs:
 
 db_schema:
 	dbml2sql --postgres -o doc/schema.sql doc/db.dbml
+
+redis:
+	docker run --name redis -p 6379:6379 -d redis:7-alpine
