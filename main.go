@@ -8,11 +8,13 @@ import (
 
 	"github.com/Drack112/simplebank/api"
 	db "github.com/Drack112/simplebank/db/sqlc"
+	_ "github.com/Drack112/simplebank/doc/statik"
 	"github.com/Drack112/simplebank/gapi"
 	"github.com/Drack112/simplebank/pb"
 	"github.com/Drack112/simplebank/util"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	_ "github.com/lib/pq"
+	"github.com/rakyll/statik/fs"
 	_ "github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -38,12 +40,12 @@ func main() {
 }
 
 func runGrpcServer(config util.Config, store db.Store) {
-	gRPCServer := grpc.NewServer()
-
 	server, err := gapi.NewServer(config, store)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create server")
 	}
+
+	gRPCServer := grpc.NewServer()
 
 	pb.RegisterSimpleBankServer(gRPCServer, server)
 	reflection.Register(gRPCServer)
@@ -78,7 +80,6 @@ func runGatewayServer(config util.Config, store db.Store) {
 
 	gRPCMux := runtime.NewServeMux(jsonOption)
 	ctx, cancel := context.WithCancel(context.Background())
-
 	defer cancel()
 
 	err = pb.RegisterSimpleBankHandlerServer(ctx, gRPCMux, server)
@@ -89,8 +90,13 @@ func runGatewayServer(config util.Config, store db.Store) {
 	mux := http.NewServeMux()
 	mux.Handle("/api/", gRPCMux)
 
-	fs := http.FileServer(http.Dir("./doc/swagger/"))
-	http.Handle("/api/swagger/", http.StripPrefix("/api/swagger/", fs))
+	statikFS, err := fs.New()
+	if err != nil {
+		log.Fatal().Err(err).Msg("cannot create statik fs")
+	}
+
+	swaggerHandler := http.StripPrefix("/api/swagger/", http.FileServer(statikFS))
+	mux.Handle("/api/swagger/", swaggerHandler)
 
 	listener, err := net.Listen("tcp", config.HttpServerAddress)
 	if err != nil {
