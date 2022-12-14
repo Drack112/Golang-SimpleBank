@@ -12,6 +12,7 @@ require (
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
+	google.golang.org/genproto v0.0.0-20221114212237-e4508ebdbee1
 	google.golang.org/grpc v1.50.1
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
 )
@@ -32,7 +33,6 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
-	google.golang.org/genproto v0.0.0-20221114212237-e4508ebdbee1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
 
