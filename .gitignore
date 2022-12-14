@@ -1,5 +1,7 @@
 /.docker/dbdata
 /.docker/dbDataTest
+/.docker/redisData
+
 /tmp
 /.vscode
 

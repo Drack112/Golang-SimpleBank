@@ -63,5 +63,3 @@ db_docs:
 db_schema:
 	dbml2sql --postgres -o doc/schema.sql doc/db.dbml
 
-redis:
-	docker run --name redis -p 6379:6379 -d redis:7-alpine

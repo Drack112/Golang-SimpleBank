@@ -54,6 +54,7 @@ func main() {
 	taskDistributor := worker.NewRedisTaskDistributor(redisOpt)
 	go runTaskProcessor(redisOpt, store)
 	go runGatewayServer(config, store, taskDistributor)
+	go runGinServer(config, store)
 	runGrpcServer(config, store, taskDistributor)
 }
 
@@ -159,7 +160,7 @@ func runGinServer(config util.Config, store db.Store) {
 		log.Fatal().Err(err).Msg("cannot create server")
 	}
 
-	err = server.Start(config.HttpServerAddress)
+	err = server.Start(config.GinServerAddress)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot start server")
 	}

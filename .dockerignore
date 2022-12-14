@@ -1,4 +1,10 @@
 tmp
+
+.circleci
+.github
+.git
+
+scripts
 .vscode
 .env.example
 .gitignore
