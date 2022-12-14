@@ -4,7 +4,7 @@
     "title": "Simple Bank API",
     "version": "1.2",
     "contact": {
-      "name": "Tech School",
+      "name": "Drack112",
       "url": "https://github.com/Drack112/Golang-Simplebank",
       "email": "banksupport@gmail.com"
     }
@@ -21,7 +21,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/create_user": {
+    "/api/v1/create_user": {
       "post": {
         "summary": "Create new user",
         "description": "Use this API to create a new user",
@@ -55,7 +55,7 @@
         ]
       }
     },
-    "/v1/login_user": {
+    "/api/v1/login_user": {
       "post": {
         "summary": "Login user",
         "description": "Use this API to login user and get access token \u0026 refresh token",
