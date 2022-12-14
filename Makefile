@@ -45,3 +45,6 @@ generate-mock:
 
 proto:
 	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative --go-grpc_out=pb --go-grpc_opt=paths=source_relative proto/*.proto
+
+evans:
+	evans --host 172.19.0.6 --port 5454 -r repl
