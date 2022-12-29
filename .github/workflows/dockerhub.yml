@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 jobs:
-  create-envfile:
+  main:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,9 +29,6 @@ jobs:
           file_name: app.env
           fail_on_empty: false
 
-  main:
-    runs-on: ubuntu-latest
-    steps:
       - name: 🚀 Checkout repo
         uses: actions/checkout@v2
 
