@@ -3,6 +3,7 @@ version: "3"
 services:
   app:
     container_name: gin-accounts-simplebank
+    image: drack112/golang-simplebank:latest
     build:
       target: builder
       context: .
