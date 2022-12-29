@@ -1,4 +1,4 @@
-.PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test server postgres-db postgres-db-test generate-mock proto db_docs db_schema evans redis
+.PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test server server-prod postgres-db postgres-db-test generate-mock proto db_docs db_schema evans redis
 
 include app.env
 export
@@ -33,6 +33,9 @@ test:
 
 server:
 	docker-compose up --build -V
+
+server-prod:
+	docker-compose -f docker-compose.prod.yml up --build -V
 
 postgres-db:
 	docker-compose up db --build -V

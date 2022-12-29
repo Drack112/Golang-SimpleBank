@@ -2,11 +2,8 @@ version: "3"
 
 services:
   app:
-    container_name: gin-accounts-simplebank
-    build:
-      target: builder
-      context: .
-    command: air .
+    container_name: gin-accounts-simplebank-prod
+    build: .
     ports:
       - 8080:8080
       - 9090:9090
@@ -18,11 +15,8 @@ services:
       - "traefik.http.routers.account.tls.certresolver=letsencrypt"
       - "traefik.enable=true"
       - "traefik.http.routers.account.rule=Host(`localhost`) && PathPrefix(`/api`)"
-    volumes:
-      - .:/go/src/app
     depends_on:
       - db
-      - db_test
       - redis
       - reverse-proxy
     networks:
@@ -30,7 +24,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: "redis-worker"
+    container_name: "redis-worker-prod"
     restart: always
     ports:
       - "6379:6379"
@@ -43,44 +37,25 @@ services:
   db:
     build:
       context: .docker/postgres
-      target: development
-    container_name: postgres-accounts-simplebank
+      dockerfile: Dockerfile.prod
+    container_name: postgres-accounts-simplebank-prod
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
       - DATABASE_HOST=${DB_HOST}
     expose:
-      - 5433
+      - 5432
     ports:
-      - 5433:5433
+      - 5432:5432
     volumes:
       - .docker/dbdata:/var/lib/postgresql/data
     networks:
       - gin-app
 
-  db_test:
-    build:
-      context: .docker/postgres
-      target: test
-    container_name: postgres-test-accounts-simplebank
-    environment:
-      - POSTGRES_USER=${DB_USER_TEST}
-      - POSTGRES_PASSWORD=${DB_PASSWORD_TEST}
-      - POSTGRES_DB=${DB_NAME_TEST}
-      - DATABASE_HOST=${DB_HOST_TEST}
-    expose:
-      - 5432
-    ports:
-      - 5432:5432
-    volumes:
-      - .docker/dbDataTest:/var/lib/postgresql/data
-    networks:
-      - gin-app
-
   reverse-proxy:
     image: traefik:v2.0
-    container_name: traefik-accounts-simplebank
+    container_name: traefik-accounts-simplebank-prod
     command:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
@@ -109,20 +84,6 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
     networks:
       - gin-app
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin_container_simplebank
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    depends_on:
-      - db
-    ports:
-      - "5050:80"
-    networks:
-      - gin-app
-    restart: unless-stopped
 
 networks:
   gin-app:
