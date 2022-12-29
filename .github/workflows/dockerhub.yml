@@ -45,7 +45,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: 🚀 Build and push production image
-        run: docker-compose -f docker-compose-prod.yml build && docker-compose -f docker-compose.prod.yml push
+        run: docker-compose -f docker-compose.prod.yml build && docker-compose -f docker-compose.prod.yml push
 
       - name: 🚀 Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
