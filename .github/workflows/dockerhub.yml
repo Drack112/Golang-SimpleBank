@@ -7,8 +7,29 @@ on:
     branches: [master]
 
 jobs:
+  create-envfile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_HTTP_SERVER_ADDRESS: 0.0.0.0:8080
+          envkey_GIN_SERVER_ADDRESS: 0.0.0.0:9090
+          envkey_GRPC_SERVER_ADDRESS: 0.0.0.0:5454
+          envkey_TOKEN_SYMMETRIC_KEY: ""
+          envkey_ACCESS_TOKEN_DURATION: ""
+          envkey_REFRESH_TOKEN_DURATION: ""
+          envkey_ENVIRONMENT: development
+          envkey_REDIS_HOST: ""
+          envkey_MIGRATION_URL: file://db/migrations
+          envkey_DB_DRIVER: postgres
+          envkey_DB_SOURCE: ""
+          directory: .
+          file_name: app.env
+          fail_on_empty: false
+
   main:
-    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - name: 🚀 Checkout repo
@@ -23,11 +44,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: 🚀 Build and push development image
-        run: docker-compose -f docker-compose.yml build && docker-compose -f docker-compose.yml push
-
       - name: 🚀 Build and push production image
-        run: docker-compose -f docker-compose.prod.yml build && docker-compose -f docker-compose.prod.yml push
+        run: docker-compose -f docker-compose-prod.yml build && docker-compose -f docker-compose.prod.yml push
 
       - name: 🚀 Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
