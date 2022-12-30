@@ -1,4 +1,4 @@
-.PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test server server-prod postgres-db postgres-db-test generate-mock proto db_docs db_schema evans redis
+.PHONY: migrate-create migrate-up migrate-down migrate-force sqlc test server server-prod postgres-db postgres-db-test generate-mock proto db_docs db_schema evans redis generate-image
 
 include app.env
 export
@@ -66,3 +66,6 @@ db_docs:
 db_schema:
 	dbml2sql --postgres -o doc/schema.sql doc/db.dbml
 
+
+generate-image:
+	docker-compose -f docker-compose.prod.yml build && docker-compose -f docker-compose.prod.yml push
