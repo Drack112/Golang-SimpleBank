@@ -1,0 +1,101 @@
+version: "3"
+
+services:
+  app:
+    image: drack112/golang-simplebank:stable
+    environment:
+      - HTTP_SERVER_ADDRESS=0.0.0.0:8080
+      - GIN_SERVER_ADDRESS=0.0.0.0:9090
+      - GRPC_SERVER_ADDRESS=0.0.0.0:5454
+      - TOKEN_SYMMETRIC_KEY=12345678901234567890123456789012
+      - ACCESS_TOKEN_DURATION=15m
+      - REFRESH_TOKEN_DURATION=24h
+      - ENVIRONMENT=development
+      - REDIS_HOST=redis:6379
+      - DB_SOURCE=postgresql://drack:123@db:5432/bank?sslmode=disable
+    ports:
+      - 8080:8080
+      - 9090:9090
+      - 5454:5454
+    restart: on-failure
+    labels:
+      - "traefik.http.routers.account.entrypoints=websecure"
+      - "traefik.http.routers.account.tls=true"
+      - "traefik.http.routers.account.tls.certresolver=letsencrypt"
+      - "traefik.enable=true"
+      - "traefik.http.routers.account.rule=Host(`localhost`) && PathPrefix(`/api`)"
+    depends_on:
+      - db
+      - redis
+      - reverse-proxy
+    networks:
+      - gin-app
+
+  redis:
+    image: redis:7-alpine
+    container_name: "redis-worker-prod"
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - redis:/data
+    networks:
+      - gin-app
+
+  db:
+    image: postgres:14
+    container_name: postgres-accounts-simplebank-prod
+    environment:
+      - POSTGRES_USER=drack
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=bank
+      - DATABASE_HOST=db
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - gin-app
+
+  reverse-proxy:
+    image: traefik:v2.0
+    container_name: traefik-accounts-simplebank-prod
+    command:
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.docker"
+      - "--providers.docker.exposedByDefault=true"
+      - "--api"
+      - "--api.insecure=true"
+      - "--log.level=DEBUG"
+    ports:
+      # The HTTP port
+      - "80:80"
+      - "443:443"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8000:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      # Dashboard
+      - "traefik.http.routers.traefik.rule=Host(`localhost`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+    networks:
+      - gin-app
+
+networks:
+  gin-app:
+    driver: bridge
+
+volumes:
+  redis: {}
+  postgres: {}
