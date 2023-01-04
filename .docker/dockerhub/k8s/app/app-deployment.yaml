@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    traefik.enable: "true"
+    traefik.http.routers.account.entrypoints: websecure
+    traefik.http.routers.account.rule: Host(`localhost`) && PathPrefix(`/api`)
+    traefik.http.routers.account.tls: "true"
+    traefik.http.routers.account.tls.certresolver: letsencrypt
+  labels:
+    io.kompose.service: app
+  name: app
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      io.kompose.service: app
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        traefik.enable: "true"
+        traefik.http.routers.account.entrypoints: websecure
+        traefik.http.routers.account.rule: Host(`localhost`) && PathPrefix(`/api`)
+        traefik.http.routers.account.tls: "true"
+        traefik.http.routers.account.tls.certresolver: letsencrypt
+      labels:
+        io.kompose.network/gin-app: "true"
+        io.kompose.service: app
+    spec:
+      containers:
+        - env:
+            - name: ACCESS_TOKEN_DURATION
+              value: 15m
+            - name: DB_SOURCE
+              value: postgresql://drack:123@db:5432/bank?sslmode=disable
+            - name: ENVIRONMENT
+              value: development
+            - name: GIN_SERVER_ADDRESS
+              value: 0.0.0.0:9090
+            - name: GRPC_SERVER_ADDRESS
+              value: 0.0.0.0:5454
+            - name: HTTP_SERVER_ADDRESS
+              value: 0.0.0.0:8080
+            - name: REDIS_HOST
+              value: redis:6379
+            - name: REFRESH_TOKEN_DURATION
+              value: 24h
+            - name: TOKEN_SYMMETRIC_KEY
+              value: "12345678901234567890123456789012"
+          image: drack112/golang-simplebank:stable
+          name: app
+          ports:
+            - containerPort: 8080
+            - containerPort: 9090
+            - containerPort: 5454
+          resources: {}
+status: {}
